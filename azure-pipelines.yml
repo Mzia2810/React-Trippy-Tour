@@ -1,43 +1,26 @@
-# azure-pipelines.yml
 trigger:
   branches:
     include:
-      - main  # change if your main branch is named differently
+      - main
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-# 1️⃣ Checkout the repo from GitHub
 - checkout: self
   clean: true
-  fetchDepth: 0   # fetch full repo history to avoid missing files
+  fetchDepth: 0
 
-# 2️⃣ Debug: list root folder (optional, useful for first run)
-- script: ls -la
-  displayName: 'List root folder'
-
-# 3️⃣ Install Node.js
+# Install Node.js 20.x
 - task: NodeTool@0
   inputs:
-    versionSpec: '20.x'   # Node version
+    versionSpec: '20.x'
   displayName: 'Install Node.js'
 
-# 4️⃣ Install dependencies with legacy-peer-deps to handle conflicts
+# Install dependencies & build with crypto legacy provider
 - script: |
+    export NODE_OPTIONS=--openssl-legacy-provider
     npm install --legacy-peer-deps
-  workingDirectory: .
-  displayName: 'Install npm dependencies (ignore peer conflicts)'
-
-# 5️⃣ Build React app
-- script: |
     npm run build
   workingDirectory: .
-  displayName: 'Build React App'
-
-# 6️⃣ Publish build artifact
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: 'build'
-    ArtifactName: 'ReactAppBuild'
-    publishLocation: 'Container'
+  displayName: 'Install & Build React App'
