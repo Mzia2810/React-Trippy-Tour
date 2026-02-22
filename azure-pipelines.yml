@@ -1,20 +1,19 @@
 # azure-pipelines.yml
-
 trigger:
   branches:
     include:
-      - main   # ya jise branch aap use karte ho
+      - main  # change if your main branch is named differently
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-# 1️⃣ Checkout code from GitHub
+# 1️⃣ Checkout the repo from GitHub
 - checkout: self
   clean: true
-  fetchDepth: 0   # fetch full repo
+  fetchDepth: 0   # fetch full repo history to avoid missing files
 
-# 2️⃣ Debug (optional, confirm files)
+# 2️⃣ Debug: list root folder (optional, useful for first run)
 - script: ls -la
   displayName: 'List root folder'
 
@@ -24,11 +23,11 @@ steps:
     versionSpec: '20.x'   # Node version
   displayName: 'Install Node.js'
 
-# 4️⃣ Install dependencies
+# 4️⃣ Install dependencies with legacy-peer-deps to handle conflicts
 - script: |
-    npm install
+    npm install --legacy-peer-deps
   workingDirectory: .
-  displayName: 'Install npm dependencies'
+  displayName: 'Install npm dependencies (ignore peer conflicts)'
 
 # 5️⃣ Build React app
 - script: |
@@ -36,7 +35,7 @@ steps:
   workingDirectory: .
   displayName: 'Build React App'
 
-# 6️⃣ Optional: Publish build artifact
+# 6️⃣ Publish build artifact
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: 'build'
