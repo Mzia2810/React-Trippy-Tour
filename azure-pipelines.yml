@@ -1,40 +1,44 @@
+# azure-pipelines.yml
+
 trigger:
   branches:
     include:
-      - main
+      - main   # ya jise branch aap use karte ho
 
-stages:
-- stage: Build
-  jobs:
-  - job: BuildJob
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    # 1️⃣ Checkout repo
-    - checkout: self
-      clean: true
-      fetchDepth: 0   # ensure full repo is fetched
+pool:
+  vmImage: 'ubuntu-latest'
 
-    # 2️⃣ Debug folder structure
-    - script: ls -la
-      displayName: 'List root folder to debug paths'
+steps:
+# 1️⃣ Checkout code from GitHub
+- checkout: self
+  clean: true
+  fetchDepth: 0   # fetch full repo
 
-    # 3️⃣ Build backend
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '20.x'
-    - script: |
-        npm install
-        npm run build
-      workingDirectory: backend
-      displayName: 'Build Backend'
+# 2️⃣ Debug (optional, confirm files)
+- script: ls -la
+  displayName: 'List root folder'
 
-    # 4️⃣ Build frontend
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '20.x'
-    - script: |
-        npm install
-        npm run build
-      workingDirectory: frontend
-      displayName: 'Build Frontend'
+# 3️⃣ Install Node.js
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.x'   # Node version
+  displayName: 'Install Node.js'
+
+# 4️⃣ Install dependencies
+- script: |
+    npm install
+  workingDirectory: .
+  displayName: 'Install npm dependencies'
+
+# 5️⃣ Build React app
+- script: |
+    npm run build
+  workingDirectory: .
+  displayName: 'Build React App'
+
+# 6️⃣ Optional: Publish build artifact
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'build'
+    ArtifactName: 'ReactAppBuild'
+    publishLocation: 'Container'
