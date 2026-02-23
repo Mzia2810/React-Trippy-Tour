@@ -24,3 +24,10 @@ steps:
     npm run build
   workingDirectory: .
   displayName: 'Install & Build React App'
+
+# Publish Build Artifact
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'build'
+    ArtifactName: 'react-build'
+    publishLocation: 'Container'
