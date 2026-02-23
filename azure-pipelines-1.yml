@@ -7,14 +7,14 @@ pool:
     - agent.os -equals Darwin   # ensure only Mac agents run this
 
 steps:
-# Install Node.js on the Mac agent (use NodeTool@0)
+# Install Node.js
 - task: NodeTool@0
   inputs:
     versionSpec: '20.x'
   displayName: 'Install Node.js'
 
-# Install dependencies and build React project
+# Install npm dependencies (ignoring peer conflicts)
 - script: |
-    npm install
+    npm install --legacy-peer-deps
     npm run build
   displayName: 'Install npm packages and build React app'
