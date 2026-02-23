@@ -1,0 +1,20 @@
+trigger:
+- main
+
+pool:
+  name: Default       # your Mac agent pool name
+  demands:
+    - agent.os -equals Darwin   # ensure only Mac agents run this
+
+steps:
+# Install Node.js on the Mac agent (use NodeTool@0)
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.x'
+  displayName: 'Install Node.js'
+
+# Install dependencies and build React project
+- script: |
+    npm install
+    npm run build
+  displayName: 'Install npm packages and build React app'
