@@ -2,9 +2,9 @@ trigger:
 - main
 
 pool:
-  name: Default       # your Mac agent pool name
+  name: Default
   demands:
-    - agent.os -equals Darwin   # ensure only Mac agents run this
+    - agent.os -equals Darwin
 
 steps:
 # Install Node.js
@@ -13,8 +13,9 @@ steps:
     versionSpec: '20.x'
   displayName: 'Install Node.js'
 
-# Install npm dependencies (ignoring peer conflicts)
+# Install npm dependencies and build React app
 - script: |
+    export NODE_OPTIONS=--openssl-legacy-provider
     npm install --legacy-peer-deps
     npm run build
   displayName: 'Install npm packages and build React app'
